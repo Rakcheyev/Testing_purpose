@@ -75,9 +75,7 @@
   - [ ] Автоматичний збір метрик
 
 ## 4. Fabric & External Data Layer
-- [ ] Integrate external sources via MCP
   - [ ] Реєстрація зовнішніх джерел
-- [ ] Parse/validate Excel, CSV, API
   - [x] Автоматичний парсинг та валідація (каркас створено: fabric_external_data/parse_validate.py)
   - [ ] Витягувати структуру даних у форматах:
     - [ ] TMDL (Tabular Model Definition Language)
@@ -85,6 +83,27 @@
     - [ ] YAML (data schema, sample)
   - [ ] Зберігати результати парсингу та валідації у pbip_artifacts/reports
   - [ ] Порівнювати структуру з MCP стандартами
+# AGENTS & Documentation Rules
+#
+# Після кожної зміни у коді, структурі чи документації обов'язково фіксувати зміни у:
+#   - README.md (опис, архітектура, бізнес-логіка, вплив)
+#   - TODO.md (нові задачі, статус виконання, технічні деталі)
+#   - CHANGELOG.md (історія змін, дати, версії, ключові доповнення)
+# Для кожного нового модуля, функції чи workflow — додавати короткий опис у pbip_artifacts/AGENTS.MD
+# Всі правила, best practices, workflow для рев'ю, staging, деплою, перевірок — зберігати у AGENTS.MD
+
+# Best practices:
+# - Додавати нові PBIP, M-код, DAX лише у staging
+# - Запускати автоматичні перевірки MCP/стандартів перед перенесенням у pbip_artifacts
+# - Переносити артефакти у pbip_artifacts лише після успішних перевірок
+# - Всі workflow описувати у AGENTS.MD для прозорості та повторюваності процесу
+
+# TODO для AGENTS:
+# - Описати workflow для CI/CD деплою
+# - Додати приклади інтеграції з MCP, REST API, DataGovernance
+
+# ---
+
 - [ ] Describe models in MCP
   - [ ] Опис моделей даних
 - [ ] Implement ETL

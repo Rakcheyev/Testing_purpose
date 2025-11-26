@@ -137,6 +137,12 @@ class Session(BaseSession[RequestT, NotificationT, ResultT]):
 
 ## 2. Рев’ю PBIP та деплой/редеплой
 
+### Enterprise деплой (автоматизація)
+- Автоматичний деплой PBIX у Power BI Service через REST API (див. pbip_artifacts/deploy_enterprise.py)
+- Інтеграція з CI/CD pipeline (Azure DevOps, GitHub Actions)
+- MCP може керувати рев'ю, lint, стандартизацією, деплоєм
+- TODO: Реалізувати deploy_enterprise.py для автоматизації
+
 ### Деталізація
 - PBIP staging workspace, рев’ю через pull request
 - Автоматичний аналіз структури PBIP (модель, міри, зв’язки)
