@@ -391,3 +391,44 @@ X-Session-ID: <session_id>
 ### MS SQL Validation Layer
 Налаштовано MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
 Вказано параметри підключення (тільки для метаданих)
+
+---
+
+## Швидкий старт
+
+### Встановлення залежностей
+
+```bash
+cd /workspaces/Testing_purpose
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+### Запуск MCP Server
+
+```bash
+uvicorn mcp_server.main:app --reload --host 0.0.0.0 --port 8080
+```
+
+Сервер доступний на: `http://localhost:8080`  
+API документація (Swagger): `http://localhost:8080/docs`
+
+### Запуск тестів
+
+```bash
+python -m pytest mcp_server/tests -v
+```
+
+### Структура endpoints
+
+- `GET /` — статус сервера
+- `GET /health` — health check
+- `POST /session/start` — старт сесії (повертає session_id)
+- `GET /capabilities` — список можливостей MCP
+- `POST /capabilities/negotiate` — узгодження можливостей
+- `POST /integration` — інтеграція з зовнішніми системами
+- `POST /review` — рев'ю PBIP/DAX/M-коду
+- `POST /standardize` — перевірка відповідності стандартам
+- `GET /monitoring` — статус моніторингу
+- `POST /metadata/sync` — синхронізація метаданих моделей
+
