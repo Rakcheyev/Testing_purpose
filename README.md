@@ -39,22 +39,14 @@ flowchart TB
 ### Взаємодія компонентів MCP
 ### Взаємодія компонентів MCP (інтеграція AI, клієнтів і серверів)
 ```mermaid
-flowchart TB
-	LLM[🤖 AI System (LLM)\nNeeds: Context, Tools, Data]
-	Host[🏠 Host Application\nHost Process (IDE, etc.)]
-	ClientA[MCP Client A\nDatabase Access]
-	ClientB[MCP Client B\nFile System]
-	ClientC[MCP Client C\nWeb APIs]
-	ServerA[MCP Server A\nPostgreSQL]
-	ServerB[MCP Server B\nFile System]
-	ServerC[MCP Server C\nREST APIs]
-	LLM -->|Requests context/tools| Host
-	Host --> ClientA
-	Host --> ClientB
-	Host --> ClientC
-	ClientA -->|Secure Protocol| ServerA
-	ClientB -->|Secure Protocol| ServerB
-	ClientC -->|Secure Protocol| ServerC
+flowchart TD
+	LLM[AI System (LLM)] --> Host[Host Application]
+	Host --> ClientA[MCP Client A]
+	Host --> ClientB[MCP Client B]
+	Host --> ClientC[MCP Client C]
+	ClientA --> ServerA[MCP Server A]
+	ClientB --> ServerB[MCP Server B]
+	ClientC --> ServerC[MCP Server C]
 ```
 
 > Діаграма ілюструє, як AI-система через хост-додаток взаємодіє з різними MCP-клієнтами та серверами.
