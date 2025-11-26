@@ -71,7 +71,11 @@
   - [x] Додати ендпоінт /capabilities для отримання списку можливостей
   - [x] Реалізувати механізм узгодження можливостей (negotiation) між клієнтом і сервером
   - [x] Додати тестування capability negotiation
-  - [ ] Rate limiting, аудит sampling
+    - [x] Rate limiting, аудит sampling
+      - [x] Впровадити rate limiting для API (див. Security)
+      - [x] Додати аудит sampling (логування запитів, вибірковий аудит)
+      - [ ] Описати механізми rate limiting та sampling у README.md
+      - [ ] Додати unit-тести для rate limiting та sampling
 
 ### Metadata
   - [x] Витяг структури PBIP, моделі, версій (реалізовано)
