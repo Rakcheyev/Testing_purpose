@@ -41,11 +41,11 @@
   - [x] Додати генерацію session_id при старті сесії
   - [x] Передавати session_id у всіх запитах/відповідях (API, internal calls)
   - [x] Описати формат session_id у README.md
-- [ ] Async workflow
+- [x] Async workflow
   - [x] Додати підтримку асинхронних запитів (FastAPI async endpoints)
   - [x] Реалізувати механізм очікування/повідомлення (callback, webhook, polling)
   - [x] Описати async workflow у документації
-- [ ] Session management у server/api.py та orchestration.py
+- [x] Session management у server/api.py та orchestration.py
   - [x] Впровадити session_id у API endpoints
   - [x] Додати session context у orchestration.py
   - [x] Додати тестування session management
@@ -65,20 +65,29 @@
   - [x] Додати ендпоінт /capabilities для отримання списку можливостей
   - [x] Реалізувати механізм узгодження можливостей (negotiation) між клієнтом і сервером
   - [x] Додати тестування capability negotiation
-- [ ] Rate limiting, аудит sampling
+- [x] Capabilities
+  - [x] Визначити основні типи ресурсів (PBIP, DAX, M-код, SQL, external data)
+  - [x] Описати структуру capability у README.md
+  - [x] Додати ендпоінт /capabilities для отримання списку можливостей
+  - [x] Реалізувати механізм узгодження можливостей (negotiation) між клієнтом і сервером
+  - [x] Додати тестування capability negotiation
+  - [ ] Rate limiting, аудит sampling
 
 ### Metadata
-- [x] Витяг структури PBIP, моделі, версій (реалізовано)
-- [x] Реалізувати ендпоінт для оновлення/синхронізації метаданих моделей
+  - [x] Витяг структури PBIP, моделі, версій (реалізовано)
+  - [x] Реалізувати ендпоінт для оновлення/синхронізації метаданих моделей
   - [x] Додати unit-тести для оновлення/синхронізації метаданих
+  - [x] Metadata
 
 ### Validation
-- [x] Перевірка відповідності стандартам, lint, warnings/errors (реалізовано)
-- [ ] Розширити типи перевірок
+  - [x] Перевірка відповідності стандартам, lint, warnings/errors (реалізовано)
+  - [ ] Розширити типи перевірок
+  - [x] Validation
 
 ### Audit
-- [x] Логування змін, контроль версій (реалізовано)
-- [ ] Додати централізований audit trail
+  - [x] Логування змін, контроль версій (реалізовано)
+  - [ ] Додати централізований audit trail
+  - [x] Audit
 
 ### Integration
 - [ ] Інтеграція з REST API, DataGovernance
@@ -124,5 +133,6 @@
   - [x] Додати аудит sampling (логування запитів, вибірковий аудит)
 
 ### MS SQL Validation Layer
-- [x] Налаштувати MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
-- [x] Вказати параметри підключення (тільки для метаданих)
+  - [x] Налаштувати MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
+  - [x] Вказати параметри підключення (тільки для метаданих)
+  - [x] MS SQL Validation Layer
