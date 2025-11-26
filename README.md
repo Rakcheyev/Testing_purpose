@@ -5,6 +5,120 @@
 ## Мета та цінність
 Даний проект — стратегічна платформа для автоматизації повного циклу розробки, підтримки, стандартизації та валідації Power BI звітів і супутніх артефактів (PBIP, M-код, DAX, SQL). Рішення орієнтоване на підвищення ефективності бізнесу, зниження операційних ризиків, забезпечення прозорості та якості даних у корпоративному середовищі.
 
+---
+
+## Архітектура Model Context Protocol (MCP)
+
+
+Model Context Protocol (MCP) — відкритий стандарт для інтеграції, автоматизації та управління моделями даних у BI/аналітичних системах. MCP забезпечує AI-First підхід, асинхронну взаємодію, гнучку маршрутизацію повідомлень та безпечний доступ до ресурсів.
+
+
+### AI-First Design Principle (загальна логіка MCP)
+```mermaid
+flowchart TB
+	subgraph AI-First Design Principle
+		A1[🔍 Dynamic Discovery\nAI finds what it needs]
+		A2[🔄 Bidirectional Flow\nAI can ask questions]
+		A3[🗂 Rich Context\nMetadata + relationships]
+		A4[🔒 Secure Sandboxing\nControlled resource access]
+	end
+	subgraph MCP Architecture
+		B1[🧭 Protocol Layer\nMessage routing & lifecycle]
+		B2[🔌 Transport Layer\nCommunication mechanisms]
+		B3[🛠 Capability System\nFeature negotiation]
+		B4[🔐 Security Model\nAccess control & validation]
+	end
+	A1 --> B1
+	A2 --> B2
+	A3 --> B3
+	A4 --> B4
+```
+
+> Діаграма показує, як AI-First принципи пов'язуються з архітектурними шарами MCP.
+
+### Взаємодія компонентів MCP
+### Взаємодія компонентів MCP (інтеграція AI, клієнтів і серверів)
+```mermaid
+flowchart TB
+	LLM[🤖 AI System (LLM)\nNeeds: Context, Tools, Data]
+	Host[🏠 Host Application\nHost Process (IDE, etc.)]
+	ClientA[MCP Client A\nDatabase Access]
+	ClientB[MCP Client B\nFile System]
+	ClientC[MCP Client C\nWeb APIs]
+	ServerA[MCP Server A\nPostgreSQL]
+	ServerB[MCP Server B\nFile System]
+	ServerC[MCP Server C\nREST APIs]
+	LLM -->|Requests context/tools| Host
+	Host --> ClientA
+	Host --> ClientB
+	Host --> ClientC
+	ClientA -->|Secure Protocol| ServerA
+	ClientB -->|Secure Protocol| ServerB
+	ClientC -->|Secure Protocol| ServerC
+```
+
+> Діаграма ілюструє, як AI-система через хост-додаток взаємодіє з різними MCP-клієнтами та серверами.
+
+### Сесійна асинхронна взаємодія
+
+### Сесійна асинхронна взаємодія (обмін повідомленнями)
+```mermaid
+sequenceDiagram
+	participant Client
+	participant Server
+	Client->>Server: initialize request
+	Server->>Client: initialize response
+	Server->>Client: initialized notification
+	Note over Client,Server: Connection ready for use
+```
+
+> Діаграма показує типовий асинхронний обмін між клієнтом і сервером MCP.
+
+
+#### Важливо: асинхронна взаємодія
+MCP підтримує асинхронний обмін повідомленнями (requests/notifications), що дозволяє ефективно працювати з різними джерелами та сервісами без блокування процесів.
+
+```python
+class Session(BaseSession[RequestT, NotificationT, ResultT]):
+	async def send_request(self, request: RequestT, result_type: type[Result]) -> Result:
+		"""Send request and wait for response. Raises McpError if response contains error."""
+		# Request handling implementation
+
+	async def send_notification(self, notification: NotificationT) -> None:
+		"""Send one-way notification that doesn't expect response."""
+		# Notification handling implementation
+
+	async def _received_request(self, responder: RequestResponder[ReceiveRequestT, ResultT]) -> None:
+		"""Handle incoming request from other side."""
+		# Request handling implementation
+
+	async def _received_notification(self, notification: ReceiveNotificationT) -> None:
+		"""Handle incoming notification from other side."""
+		# Notification handling implementation
+```
+
+#### Важливо: асинхронна взаємодія
+MCP підтримує асинхронний обмін повідомленнями (requests/notifications), що дозволяє ефективно працювати з різними джерелами та сервісами без блокування процесів.
+
+```python
+class Session(BaseSession[RequestT, NotificationT, ResultT]):
+	async def send_request(self, request: RequestT, result_type: type[Result]) -> Result:
+		"""Send request and wait for response. Raises McpError if response contains error."""
+		# Request handling implementation
+
+	async def send_notification(self, notification: NotificationT) -> None:
+		"""Send one-way notification that doesn't expect response."""
+		# Notification handling implementation
+
+	async def _received_request(self, responder: RequestResponder[ReceiveRequestT, ResultT]) -> None:
+		"""Handle incoming request from other side."""
+		# Request handling implementation
+
+	async def _received_notification(self, notification: ReceiveNotificationT) -> None:
+		"""Handle incoming notification from other side."""
+		# Notification handling implementation
+```
+
 ### Ключові переваги автоматизації
 - **Скорочення часу на рев’ю та деплой:** у 5-10 разів швидше порівняно з ручними, не стандартизованими процесами
 - **Зниження кількості помилок та інцидентів:** на 80-95% завдяки автоматичній валідації та стандартизації
