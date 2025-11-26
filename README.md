@@ -40,7 +40,7 @@ flowchart TB
 ### Взаємодія компонентів MCP (інтеграція AI, клієнтів і серверів)
 ```mermaid
 flowchart TD
-	LLM[AI System (LLM)] --> Host[Host Application]
+	LLM[AI System] --> Host[Host Application]
 	Host --> ClientA[MCP Client A]
 	Host --> ClientB[MCP Client B]
 	Host --> ClientC[MCP Client C]
