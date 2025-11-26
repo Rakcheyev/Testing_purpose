@@ -11,7 +11,7 @@ from .security import (
     get_current_user,
     rate_limiter,
     audit_sampler,
-    get_audit_sample,
+    get_audit_sample as fetch_audit_sample,
 )
 
 
@@ -174,7 +174,7 @@ async def sampled_health(request: Request):
 
 @router.get("/audit/sampled")
 def get_audit_sample():
-    return get_audit_sample()
+    return fetch_audit_sample()
 
 @router.post("/metadata/sync")
 async def sync_metadata(request: Request):
