@@ -1,35 +1,42 @@
-# AGENTS.MD: Правила та інструментар MCP AI Integration Project
 
-## Основні правила внесення змін
-- Після кожної зміни у коді, структурі чи документації обов'язково фіксувати зміни у:
-  - README.md (опис, архітектура, бізнес-логіка, вплив)
-  - TODO.md (нові задачі, статус виконання, технічні деталі)
-  - CHANGELOG.md (історія змін, дати, версії, ключові доповнення)
-- Для кожного нового модуля, функції чи workflow — додавати короткий опис у AGENTS.MD
-- Всі правила, best practices, workflow для рев'ю, staging, деплою, перевірок — зберігати у цьому файлі.
+# AGENTS.MD — правила, best practices, workflow
 
-## Інструментар для рев'ю, staging, перевірок
-- pbip_staging/: тимчасове зберігання PBIP, M-коду, DAX для рев'ю та тестування
-- pbip_artifacts/: зберігання артефактів після успішних перевірок
-- pbip_export.py: експорт моделей у TMDL, JSON, YAML
-- pbip_report.py: генерація звітів відповідності
+**Фіксуйте зміни у:**
+- README.md (опис, архітектура, бізнес-логіка, вплив)
+- TODO.md (нові задачі, статус виконання, технічні деталі)
+- CHANGELOG.md (історія змін, дати, версії, ключові доповнення)
+
+**Для кожного нового модуля, функції чи workflow — короткий опис у AGENTS.MD**
+
+**Всі правила, best practices, workflow для рев'ю, staging, деплою, перевірок — тут.**
+
+
+**Інструментар MCP:**
+- pbip_staging/: тимчасове зберігання PBIP, M-коду, DAX
+- pbip_artifacts/: зберігання артефактів після перевірок
+- pbip_export.py: експорт моделей (TMDL, JSON, YAML)
+- pbip_report.py: генерація звітів
 - pbip_validate.py: автоматична валідація PBIP/PBIX
 - pbip_compare.py: порівняння моделей
-- deploy_enterprise.py: автоматизація деплою PBIX через REST API (enterprise)
-- fabric_external_data/parse_validate.py: парсинг та валідація Excel, CSV, API
+- deploy_enterprise.py: деплой PBIX через REST API
+- fabric_external_data/parse_validate.py: парсинг/валідація Excel, CSV, API
 
-## Best practices
+
+**Best practices:**
 - Додавати нові PBIP, M-код, DAX лише у staging
-- Запускати автоматичні перевірки MCP/стандартів перед перенесенням у pbip_artifacts
+- Автоматичні перевірки MCP/стандартів перед перенесенням у pbip_artifacts
 - Переносити артефакти у pbip_artifacts лише після успішних перевірок
-- Всі workflow описувати у AGENTS.MD для прозорості та повторюваності процесу
+- Всі workflow описувати у AGENTS.MD для прозорості та повторюваності
 
+
+
+---
 
 ## TODO для AGENTS
 
 
 ### Protocol & Session
-#### Session Management
+**Session Management**
 - [x] Впровадити session_id (UUID) для кожної сесії
   - [x] Додати генерацію session_id при старті сесії
   - [x] Передавати session_id у всіх запитах/відповідях (API, internal calls)
@@ -43,7 +50,7 @@
   - [x] Додати session context у orchestration.py
   - [x] Додати тестування session management
 
-#### Session Lifecycle & Audit Trail
+**Session Lifecycle & Audit Trail**
 - [ ] Описати lifecycle сесії (init, process, close)
   - [ ] Додати функції старту, обробки, завершення сесії
   - [ ] Описати lifecycle у README.md
