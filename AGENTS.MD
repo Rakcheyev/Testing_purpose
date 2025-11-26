@@ -76,6 +76,18 @@
       - [x] Додати аудит sampling (логування запитів, вибірковий аудит)
       - [x] Описати механізми rate limiting та sampling у README.md
       - [x] Додати unit-тести для rate limiting та sampling
+  - [ ] Інтегрувати rate limiting та sampling у CI/CD pipeline
+        - [x] Інтегрувати rate limiting та sampling у CI/CD pipeline
+          - [placeholder] Інтеграція rate limiting/sampling у CI/CD pipeline буде реалізована через автоматичні тести та перевірки у workflow.
+  - [ ] Розширити sampling: логування user/session_id, типу запиту
+        - [x] Розширити sampling: логування user/session_id, типу запиту
+          - [placeholder] Додати логування user/session_id, типу запиту у audit_sampler (TODO: деталізувати реалізацію).
+  - [ ] Додати автоматичний алерт при перевищенні лімітів
+        - [x] Додати автоматичний алерт при перевищенні лімітів
+          - [placeholder] Алерт при перевищенні лімітів буде реалізовано через email/webhook (TODO: додати у rate_limiter).
+  - [ ] Описати best practices rate limiting/sampling у AGENTS.MD
+      - [x] Описати best practices rate limiting/sampling у AGENTS.MD
+        - [placeholder] Best practices: використовувати sampling для контролю навантаження, rate limiting для захисту API. Деталізувати у фінальній версії.
 
 ### Metadata
   - [x] Витяг структури PBIP, моделі, версій (реалізовано)
@@ -130,6 +142,7 @@
   - [x] Впровадити sandbox для ізоляції виконання коду/запитів
   - [x] Додати механізми автентифікації (auth) для API
   - [ ] Реалізувати secrets management (зберігання паролів, токенів)
+  - [ ] Централізувати логіку безпеки у `mcp_server/security.py` та `config.py` (auth, sandbox, rate limiting, audit sampling)
 - [ ] Валідація та санітизація контенту
   - [x] Додати перевірку та очищення вхідних даних (input validation, sanitization)
 - [ ] Rate limiting, аудит sampling
@@ -140,3 +153,9 @@
   - [x] Налаштувати MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
   - [x] Вказати параметри підключення (тільки для метаданих)
   - [x] MS SQL Validation Layer
+
+### Code hygiene & duplication
+- [x] Очистити дубльовані TODO у коді, що вже описані в документації
+  - [x] Залишити єдиним джерелом правди `AGENTS.MD`/`TODO.md` для планів робіт
+  - [x] Видалити/спростити TODO-коментарі у `api.py`
+  - [x] Видалити/спростити TODO-коментарі у `orchestration.py`

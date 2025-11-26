@@ -1,34 +1,24 @@
-"""
-api.py — ендпоінти MCP server для інтеграції, рев'ю, стандартизації
-"""
-from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, HTTPException, status, Depends
+"""api.py — ендпоінти MCP server для інтеграції, рев'ю, стандартизації."""
+
+from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, Depends
 from pydantic import BaseModel, ValidationError, constr
 import uuid
 import asyncio
-import time
-from collections import defaultdict
-import random
+
+
+from .security import (
+    sandboxed,
+    get_current_user,
+    rate_limiter,
+    audit_sampler,
+    get_audit_sample,
+)
 
 
 app = FastAPI()
 router = APIRouter()
 
 app.include_router(router)
-# Sandbox: простий декоратор для ізоляції (приклад)
-def sandboxed(func):
-    def wrapper(*args, **kwargs):
-        # Тут може бути логіка ізоляції, перевірки ресурсів, лімітів
-        return func(*args, **kwargs)
-    return wrapper
-
-# Auth: простий механізм токен-автентифікації
-API_TOKENS = {"demo-token": "user1"}
-
-def get_current_user(request: Request):
-    token = request.headers.get("X-API-Token")
-    if not token or token not in API_TOKENS:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or missing API token")
-    return API_TOKENS[token]
 
 @router.get("/health")
 def health(request: Request):
@@ -136,7 +126,6 @@ def get_capabilities():
 @router.post("/capabilities/negotiate")
 async def negotiate_capabilities(request: Request):
     client_caps = (await request.json()) if hasattr(request, 'json') else request.json()
-    # Серверні можливості (можна винести у окремий модуль)
     server_caps = {
         "PBIP": ["review", "validate", "deploy", "export"],
         "DAX": ["lint", "validate", "optimize"],
@@ -171,37 +160,11 @@ async def process_validated(request: Request):
     # ... тут логіка обробки ...
     return {"session_id": session_id, "result": "validated", "data": validated.data}
 
-# Простий rate limiting (N запитів на IP за T секунд)
-RATE_LIMIT = 5  # запитів
-RATE_PERIOD = 10  # секунд
-rate_limit_store = defaultdict(list)
-
-async def rate_limiter(request: Request):
-    ip = request.client.host
-    now = time.time()
-    rate_limit_store[ip] = [t for t in rate_limit_store[ip] if now - t < RATE_PERIOD]
-    if len(rate_limit_store[ip]) >= RATE_LIMIT:
-        raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    rate_limit_store[ip].append(now)
-
 @router.get("/limited/health")
 async def limited_health(request: Request):
     await rate_limiter(request)
     session_id = request.headers.get("X-Session-ID")
     return {"status": "ok", "session_id": session_id}
-
-# Аудит: вибірковий аудит запитів
-audited_requests = []
-AUDIT_SAMPLE_RATE = 0.3  # 30% запитів логуються
-
-async def audit_sampler(request: Request):
-    if random.random() < AUDIT_SAMPLE_RATE:
-        audited_requests.append({
-            "timestamp": time.time(),
-            "ip": request.client.host,
-            "path": request.url.path,
-            "headers": dict(request.headers)
-        })
 
 @router.get("/sampled/health")
 async def sampled_health(request: Request):
@@ -211,9 +174,7 @@ async def sampled_health(request: Request):
 
 @router.get("/audit/sampled")
 def get_audit_sample():
-    return {"sampled_requests": audited_requests}
-
-# TODO: Додати ендпоінти для рев'ю PBIP, перевірки стандартів, моніторингу
+    return get_audit_sample()
 
 @router.post("/metadata/sync")
 async def sync_metadata(request: Request):

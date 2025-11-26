@@ -62,22 +62,11 @@
 
 # === Поточна реалізація: лише рев'ю PBIP ===
 def orchestrate_pbip_review(pbip_path: str) -> dict:
+    """Запуск рев'ю PBIP (деталізований план див. у AGENTS.MD/TODO.md).
+
+    Поточна реалізація:
+    - повертає stub-статус для заданого PBIP-шляху.
     """
-    Запуск рев'ю PBIP:
-    - Витягує структуру PBIP
-    - Порівнює зі стандартами MCP
-    - Генерує звіт відповідності
-    - Логування та аудит
-    - (Майбутнє) інтеграція з session, security, monitoring
-    """
-    # TODO: protocol/session — додати ідентифікатор сесії, async
-    # TODO: capabilities — перевірити типи ресурсів
-    # TODO: security — sandbox, auth
-    # TODO: metadata — витяг структури
-    # TODO: validation — порівняння зі стандартами
-    # TODO: audit — логування змін
-    # TODO: integration — REST API, DataGovernance
-    # TODO: monitoring — статус, алерти
     return {"status": "review started", "pbip": pbip_path}
 
 # === Майбутній розвиток ===
