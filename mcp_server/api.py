@@ -1,8 +1,7 @@
 """api.py — ендпоінти MCP server для інтеграції, рев'ю, стандартизації."""
 
-from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, Depends
+from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, ValidationError, constr
-import uuid
 import asyncio
 
 
@@ -13,6 +12,7 @@ from .security import (
     audit_sampler,
     get_audit_sample as fetch_audit_sample,
 )
+from .orchestration import session_manager
 
 
 app = FastAPI()
@@ -27,18 +27,68 @@ def health(request: Request):
 
 # MCP: Старт сесії, генерація session_id
 @router.post("/session/start")
-def start_session():
-    session_id = str(uuid.uuid4())
-    return {"session_id": session_id, "status": "started"}
+def start_session(request: Request):
+    user = request.headers.get("X-User-ID", "system")
+    metadata = {}
+    if request.client and request.client.host:
+        metadata["ip"] = request.client.host
+    session_id = session_manager.start_session(user=user, metadata=metadata or None)
+    return {"session_id": session_id, "status": session_manager.sessions[session_id]["status"]}
 
 # MCP: Приклад ендпоінта, який очікує session_id у запиті
 @router.post("/process")
-def process(request: Request):
+async def process(request: Request):
     session_id = request.headers.get("X-Session-ID")
     if not session_id:
-        return {"error": "Session ID required"}
-    # ... тут логіка обробки ...
-    return {"session_id": session_id, "result": "processed"}
+        raise HTTPException(status_code=400, detail="Session ID required")
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+    action = payload.get("action", "process")
+    data = payload.get("data") or payload.get("payload")
+    status = payload.get("status", "ok")
+    user = request.headers.get("X-User-ID", "system")
+    try:
+        entry = session_manager.process_session(
+            session_id,
+            action=action,
+            user=user,
+            payload=data,
+            status=status,
+        )
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Session not found") from None
+    response = {
+        "session_id": session_id,
+        "action": action,
+        "status": entry["status"],
+        "session_state": session_manager.sessions[session_id]["status"],
+    }
+    return response
+
+
+@router.post("/session/close")
+async def close_session(request: Request):
+    session_id = request.headers.get("X-Session-ID")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="Session ID required")
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+    status = payload.get("status", "closed")
+    user = request.headers.get("X-User-ID", "system")
+    try:
+        entry = session_manager.close_session(session_id, user=user, status=status)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Session not found") from None
+    return {
+        "session_id": session_id,
+        "status": entry["status"],
+        "session_state": session_manager.sessions[session_id]["status"],
+        "closed_at": entry["timestamp"],
+    }
 
 # MCP: Async workflow — асинхронний ендпоінт
 @router.post("/async-task")

@@ -2,6 +2,7 @@
 
 ## MCP Server
 - [x] Створити каркас серверної частини MCP (mcp_server/)
+- [x] Реалізувати життєвий цикл сесій (start/process/close) з audit trail та unit-тестами
 - [ ] Реалізувати ендпоінти для інтеграції, рев'ю, стандартизації, моніторингу
 - [ ] Додати механізми безпеки, secrets management
   - [ ] Винести auth/sandbox/rate limiting/audit sampling з `api.py` у `security.py`

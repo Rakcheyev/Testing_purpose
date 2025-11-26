@@ -51,9 +51,10 @@
   - [x] Додати тестування session management
 
 **Session Lifecycle & Audit Trail**
-- [ ] Описати lifecycle сесії (init, process, close)
-  - [ ] Додати функції старту, обробки, завершення сесії
-  - [ ] Описати lifecycle у README.md
+- [x] Описати lifecycle сесії (init, process, close)
+  - [x] Додати функції старту, обробки, завершення сесії
+  - [x] Описати lifecycle у README.md
+- **Session lifecycle workflow:** `/session/start` створює UUID, `SessionManager.process_session` фіксує дії та оновлює контекст, `/session/close` завершує сесію й заносить результат в аудит. AuditTrail надає `get_session_records` і `export` для аналізу.
 - [x] Додавати записи (timestamp, user, action, status) у audit.log або БД
 - [x] Описати формат audit trail у документації
 - [x] Впровадити audit.log або БД для зберігання історії сесій

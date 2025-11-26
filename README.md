@@ -280,28 +280,33 @@ X-Session-ID: <session_id>
 
 ## Session Lifecycle та Audit Trail MCP
 
-- Кожна сесія проходить етапи: старт (init), обробка запитів (process), завершення (close).
-- Для кожної дії у сесії створюється запис у audit trail з такими полями:
-  - `timestamp`: час події (Unix time)
-  - `session_id`: ідентифікатор сесії (UUID)
-  - `user`: користувач або сервіс
-  - `action`: тип дії (init, process, close, ...)
-  - `status`: статус виконання (started, ok, error, closed)
-- Audit trail зберігається централізовано (in-memory, файл, БД) та може експортуватися для аналізу.
-- Приклад запису:
+- **Етапи життєвого циклу:** старт (`init`), обробка (`process`), завершення (`close`).
+- **Центральні ендпоінти:** `/session/start`, `/process`, `/session/close`. У всіх викликах передається заголовок `X-Session-ID`, а за потреби `X-User-ID`.
+- **SessionManager:** методи `start_session`, `process_session`, `close_session` створюють UUID, зберігають контекст, історію дій та поточний статус (`started` → `processing`/`error` → `closed`).
+- **AuditTrail:** для кожної події фіксує `timestamp`, `session_id`, `user`, `action`, `status`. Дані доступні через `get_session_records(session_id)` або `export()`.
 
-```json
-{
-  "timestamp": 1701024000.0,
-  "session_id": "d3b07384-2e4e-4c3a-9c1e-1a2b3c4d5e6f",
-  "user": "service",
-  "action": "init",
-  "status": "started"
-}
+Приклад послідовності викликів:
+
+```http
+POST /session/start
+X-User-ID: tester
+
+→ {"session_id": "d3b07384-...", "status": "started"}
+
+POST /process
+X-Session-ID: d3b07384-...
+{"action": "validate", "data": {"step": 1}}
+
+→ {"session_id": "d3b07384-...", "action": "validate", "status": "ok", "session_state": "processing"}
+
+POST /session/close
+X-Session-ID: d3b07384-...
+{"status": "closed"}
+
+→ {"session_id": "d3b07384-...", "status": "closed", "session_state": "closed", "closed_at": 1701024000.0}
 ```
 
-- Для отримання історії дій по сесії використовуйте метод `get_session_records(session_id)`.
-- Для експорту всієї історії — метод `export()`.
+Таким чином кожна сесія має відтворювану історію подій і статусів, що дозволяє виконувати аудит та повторний аналіз.
 
 ---
 

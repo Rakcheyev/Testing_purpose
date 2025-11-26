@@ -6,7 +6,12 @@
 - Реалізовано базові ендпоінти MCP Server: /integration, /review, /standardize, /monitoring (api.py, main.py)
 - Додано stub-логіку для payload/response
 - Додано unit-тести для всіх базових ендпоінтів (tests/)
-*** End Patch
+
+### Session Lifecycle & Audit Trail
+- Розширено `SessionManager`: додано `process_session`, аудит історії, статуси `started/processing/closed`.
+- Ендпоінти `/session/start`, `/process`, `/session/close` тепер використовують спільний менеджер та повертають деталізований стан сесії.
+- Додано тести `test_session_lifecycle.py`, оновлено `test_session_manager.py` для перевірки життєвого циклу.
+- README, TODO та AGENTS доповнені описом workflow і доступними статусами.
 
 
 ## [Unreleased]
