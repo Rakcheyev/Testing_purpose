@@ -74,8 +74,8 @@
     - [x] Rate limiting, аудит sampling
       - [x] Впровадити rate limiting для API (див. Security)
       - [x] Додати аудит sampling (логування запитів, вибірковий аудит)
-      - [ ] Описати механізми rate limiting та sampling у README.md
-      - [ ] Додати unit-тести для rate limiting та sampling
+      - [x] Описати механізми rate limiting та sampling у README.md
+      - [x] Додати unit-тести для rate limiting та sampling
 
 ### Metadata
   - [x] Витяг структури PBIP, моделі, версій (реалізовано)
