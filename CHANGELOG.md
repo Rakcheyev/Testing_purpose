@@ -2,9 +2,18 @@
 
 ## 2025-11-26
 
+### MCP Server Endpoints
+- Реалізовано базові ендпоінти MCP Server: /integration, /review, /standardize, /monitoring (api.py, main.py)
+- Додано stub-логіку для payload/response
+- Додано unit-тести для всіх базових ендпоінтів (tests/)
+*** End Patch
 
 
 ## [Unreleased]
+ - Створено каркас серверної частини MCP (mcp_server/): main.py, config.py, api.py, security.py, orchestration.py, standards/, tests/
+ - Оновлено README.md: додано секцію про MCP server, його структуру та інтеграцію
+ - Оновлено TODO.md: додано пункт про MCP server, його структуру та задачі
+ - Дороблено плейсхолдер-скрипт external/update_standards.py для автоматичного оновлення external/standards_mcp.json при зміні підмодулів/стандартів. Додано TODO для CI/CD інтеграції.
 
 ### Архітектура та документація
 - Створено README.md з бізнес-описом, цінністю, ризиками, перевагами, DataGovernance

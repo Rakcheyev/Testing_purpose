@@ -1,3 +1,13 @@
+"""
+update_standards.py
+Плейсхолдер для автоматичного оновлення external/standards_mcp.json при зміні підмодулів/стандартів.
+
+TODO:
+- Зчитувати стандарти з Power_Query_guide та DAX_Templates
+- Оновлювати external/standards_mcp.json
+- Інтегрувати у CI/CD pipeline для автоматичного запуску
+"""
+
 import os
 import json
 
@@ -21,7 +31,7 @@ def extract_dax_standards():
 
 def regenerate_standards_json():
     standards = {
-        "Power_Query_guide": extract_power_query_standards(),
+        "Power_Query_guide": extract_power_query_standards(), 
         "DAX_Templates": extract_dax_standards()
     }
     with open("external/standards_mcp.json", "w", encoding="utf-8") as f:
@@ -29,7 +39,7 @@ def regenerate_standards_json():
     print("standards_mcp.json оновлено!")
 
 if __name__ == "__main__":
-    regenerate_standards_json()
+    regenerate_standards_json() 
     # TODO: Реалізувати парсинг Markdown-файлів для автоматичного оновлення стандартів
     # TODO: Інтегрувати у CI/CD pipeline для автоматичного запуску при оновленні підмодулів
     # TODO: Додати тригер на git pull/push для ручного запуску

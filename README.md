@@ -1,5 +1,3 @@
-
-
 # MCP AI Integration Platform: Корпоративний каркас автоматизації Power BI
 
 ## Мета та цінність
@@ -110,6 +108,23 @@ class Session(BaseSession[RequestT, NotificationT, ResultT]):
 
 # Опис MCP AI Integration Layers
 
+## MCP Server (серверна частина)
+**mcp_server/** — окремий модуль для серверної логіки, інтеграції, оркестрації, безпеки та роботи зі стандартами.
+
+### Структура:
+```
+mcp_server/
+	main.py            # точка входу FastAPI MCP server
+	config.py          # конфігурація, параметри безпеки
+	api.py             # ендпоінти для інтеграції, рев'ю, стандартизації
+	security.py        # механізми авторизації, secrets management
+	orchestration.py   # workflow для рев'ю, деплою, моніторингу
+	standards/         # робота зі стандартами MCP
+	tests/             # unit-тести
+```
+**Призначення:** ізоляція бізнес-логіки, інтеграції, безпеки, масштабування та CI/CD.
+**Інтеграція:** взаємодія з PBIP, external standards, DataGovernance, CI/CD pipeline.
+
 ## External Standards & Templates
 **Power_Query_guide:**
 - M-Code formatting, naming, header comments, doc-blocks, best practices для Power Query/Fabric/Power BI
@@ -211,25 +226,157 @@ class Session(BaseSession[RequestT, NotificationT, ResultT]):
 **Вплив:** підвищення довіри до даних, прозорість, зниження ризиків
 **Альтернатива:** ручне ведення каталогів, розрізнені Excel/SharePoint-реєстри
 
-### Деталізація
-- Інтеграція з Fabric Pipelines для автоматизації ETL, деплою, оновлення моделей
-- Впровадження наскрізного моніторингу всіх прошарків (від джерела до звіту)
-- Збір метрик, логів, статусів на кожному етапі pipeline
-- Автоматичний аналіз ефективності, пропозиції щодо оптимізації (наприклад, рекомендації по індексам, структурам, розподілу навантаження)
-- Візуалізація всіх етапів pipeline, алерти, audit trail
-- Можливість інтеграції з корпоративними системами моніторингу та аналітики
+---
 
-**Безпека:** контроль доступу до pipeline, ізоляція конфігурацій, аудит змін
-**Вплив:** підвищення ефективності, зниження простоїв, оптимізація ресурсів
-**Альтернатива:** ручне адміністрування pipeline, окремі скрипти для моніторингу
+## Формат session_id та принципи сесій MCP
 
-### Деталізація
-- Парсинг Excel, CSV, API через окремі модулі
-- Витяг структури у TMDL, JSON, YAML
-- Валідація, порівняння зі стандартами MCP
-- Логування та аудит імпортів
-- Sandbox/quarantine для підозрілих даних
+- Кожна сесія має унікальний ідентифікатор `session_id` (UUID v4), який генерується сервером при старті сесії.
+- `session_id` передається у всіх запитах/відповідях через HTTP-заголовок `X-Session-ID`.
+- Формат: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` (наприклад, `d3b07384-2e4e-4c3a-9c1e-1a2b3c4d5e6f`)
+- Всі дії, пов'язані із сесією, логуються для аудиту та трасування.
+- Приклад старту сесії:
 
-**Безпека:** парсинг лише дозволених джерел, quarantine imports
-**Вплив:** якість інтеграції, зниження ризиків
-**Альтернатива:** ручний імпорт, попередня перевірка вручну
+```http
+POST /session/start
+Response: { "session_id": "d3b07384-2e4e-4c3a-9c1e-1a2b3c4d5e6f", "status": "started" }
+```
+
+- Приклад запиту з session_id:
+
+```http
+POST /process
+X-Session-ID: d3b07384-2e4e-4c3a-9c1e-1a2b3c4d5e6f
+{ ...payload... }
+```
+
+---
+
+## Async workflow: callback, polling, опис
+
+- Асинхронні задачі можуть запускатися через ендпоінти `/async-task`, `/async-task-callback`, `/async-task-polling`.
+- Для callback (webhook) клієнт передає заголовок `X-Callback-URL`, сервер викликає цей URL після завершення задачі.
+- Для polling сервер зберігає статус задачі, клієнт періодично опитує `/async-task-status`.
+- Всі async запити мають session_id у заголовку `X-Session-ID`.
+
+### Приклад callback:
+```http
+POST /async-task-callback
+X-Session-ID: <session_id>
+X-Callback-URL: https://client/callback
+{ ...payload... }
+```
+
+### Приклад polling:
+```http
+POST /async-task-polling
+X-Session-ID: <session_id>
+{ ...payload... }
+
+GET /async-task-status
+X-Session-ID: <session_id>
+```
+
+---
+
+## Session Lifecycle та Audit Trail MCP
+
+- Кожна сесія проходить етапи: старт (init), обробка запитів (process), завершення (close).
+- Для кожної дії у сесії створюється запис у audit trail з такими полями:
+  - `timestamp`: час події (Unix time)
+  - `session_id`: ідентифікатор сесії (UUID)
+  - `user`: користувач або сервіс
+  - `action`: тип дії (init, process, close, ...)
+  - `status`: статус виконання (started, ok, error, closed)
+- Audit trail зберігається централізовано (in-memory, файл, БД) та може експортуватися для аналізу.
+- Приклад запису:
+
+```json
+{
+  "timestamp": 1701024000.0,
+  "session_id": "d3b07384-2e4e-4c3a-9c1e-1a2b3c4d5e6f",
+  "user": "service",
+  "action": "init",
+  "status": "started"
+}
+```
+
+- Для отримання історії дій по сесії використовуйте метод `get_session_records(session_id)`.
+- Для експорту всієї історії — метод `export()`.
+
+---
+
+## Capabilities MCP: типи ресурсів та структура
+
+- Основні типи ресурсів:
+  - PBIP (Power BI Project)
+  - DAX (Data Analysis Expressions)
+  - M-код (Power Query)
+  - SQL (MS SQL, external SQL)
+  - External data (Excel, CSV, API)
+
+- Структура capability:
+```json
+{
+  "resource": "PBIP",
+  "actions": ["review", "validate", "deploy", "export"],
+  "formats": ["TMDL", "JSON", "YAML"]
+}
+```
+
+- Кожен тип ресурсу має перелік доступних дій та форматів.
+- Для отримання списку можливостей буде реалізовано ендпоінт `/capabilities`.
+
+---
+
+## Формат метаданих MCP
+
+- Кожна модель має унікальний `model_id` (рядок, UUID або slug).
+- Метадані моделі містять:
+  - `name`: назва моделі
+  - `version`: версія (рядок, наприклад "v1.0")
+  - `description`: опис
+  - `resources`: перелік ресурсів (PBIP, DAX, M-код, SQL, external data)
+  - `structure`: структура моделі (схеми, таблиці, міри, зв'язки, параметри)
+  - `created_at`, `updated_at`: дати створення/оновлення
+  - `owner`: відповідальний користувач/сервіс
+
+- Приклад метаданих:
+```json
+{
+  "model_id": "pbip-2025-001",
+  "metadata": {
+    "name": "Sales Analytics",
+    "version": "v1.0",
+    "description": "Модель для аналізу продажів",
+    "resources": ["PBIP", "DAX", "SQL"],
+    "structure": {
+      "tables": ["Sales", "Customers", "Products"],
+      "measures": ["Total Sales", "Average Price"],
+      "relations": [{"from": "Sales", "to": "Customers", "type": "many-to-one"}]
+    },
+    "created_at": "2025-11-26T10:00:00Z",
+    "updated_at": "2025-11-26T12:00:00Z",
+    "owner": "bi-team"
+  }
+}
+```
+
+- Формат відповіді ендпоінта `/metadata/sync`:
+```json
+{
+  "model_id": "pbip-2025-001",
+  "metadata": { ... },
+  "status": "synced"
+}
+```
+
+---
+
+### MCP Server: базові ендпоінти
+- Реалізовано ендпоінти /integration, /review, /standardize, /monitoring (FastAPI)
+- Додано stub-логіку для payload/response
+- Додано unit-тести для всіх базових ендпоінтів
+
+### MS SQL Validation Layer
+- Налаштовано MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
+- Вказано параметри підключення (тільки для метаданих)
