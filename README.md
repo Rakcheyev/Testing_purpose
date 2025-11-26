@@ -373,10 +373,21 @@ X-Session-ID: <session_id>
 ---
 
 ### MCP Server: базові ендпоінти
-- Реалізовано ендпоінти /integration, /review, /standardize, /monitoring (FastAPI)
-- Додано stub-логіку для payload/response
-- Додано unit-тести для всіх базових ендпоінтів
+Реалізовано ендпоінти /integration, /review, /standardize, /monitoring (FastAPI)
+Додано stub-логіку для payload/response
+Додано unit-тести для всіх базових ендпоінтів
+
+### Rate limiting та аудит sampling
+
+**Rate limiting:**
+Використовується простий механізм обмеження кількості запитів на IP за певний період (наприклад, 5 запитів за 10 секунд). Якщо ліміт перевищено — повертається HTTP 429. Ендпоінт: `/limited/health`.
+
+**Аудит sampling:**
+Вибіркове логування запитів (sampling rate 30%). Логуються IP, час, шлях, заголовки. Перегляд вибіркових запитів — ендпоінт `/audit/sampled`. Аудит sampling використовується для контролю навантаження та аналізу безпеки.
+
+**Unit-тести:**
+Тести для rate limiting та sampling — `mcp_server/tests/test_rate_limiting_sampling.py`.
 
 ### MS SQL Validation Layer
-- Налаштовано MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
-- Вказано параметри підключення (тільки для метаданих)
+Налаштовано MCP Data Connector для доступу до INFORMATION_SCHEMA, sys.tables, sys.indexes
+Вказано параметри підключення (тільки для метаданих)
