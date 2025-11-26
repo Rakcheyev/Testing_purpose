@@ -1,0 +1,6 @@
+[submodule "external/Power_Query_guide"]
+	path = external/Power_Query_guide
+	url = git@github.com:Rakcheyev/Power_Query_guide.git
+[submodule "external/DAX_Templates"]
+	path = external/DAX_Templates
+	url = git@github.com:Rakcheyev/DAX_Templates.git

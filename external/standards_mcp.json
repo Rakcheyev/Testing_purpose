@@ -1,0 +1,50 @@
+{
+  "Power_Query_guide": {
+    "source": "external/Power_Query_guide/Standards/FORMATTER.md",
+    "formatting": {
+      "header_comment": {
+        "fields": ["query_name", "purpose", "source", "dependencies", "author", "created", "notes"],
+        "style": "snake_case for queries/functions, PascalCase for steps"
+      },
+      "naming": {
+        "external_objects": "snake_case",
+        "steps": "PascalCase"
+      },
+      "indentation": "4 spaces",
+      "commas": "trailing",
+      "parentheses": "open inline, close on new line",
+      "comments": "block-level, before sections"
+    },
+    "doc_block": {
+      "required": ["Documentation.Name", "Documentation.Description", "Documentation.LongDescription", "Documentation.Category", "Documentation.Source", "Documentation.Version", "Documentation.Examples"]
+    }
+  },
+  "DAX_Templates": {
+    "source": "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md",
+    "naming": {
+      "measures": "snake_case with semantic prefix",
+      "folders": ["_Basic", "_Final", "_Tech", "_Titles", "_Color_themes"],
+      "columns": "PascalCase with spaces for user-facing"
+    },
+    "coding": {
+      "qualification": "Columns fully qualified, measures unqualified",
+      "formatting": "DAX Formatter, one logical step per line",
+      "variables": "Prefer VAR, group scalars before tables",
+      "division": "Use DIVIDE() unless denominator is guaranteed non-zero",
+      "counting": "Prefer COUNTROWS over COUNT on a column",
+      "single_value": "Use SELECTEDVALUE()"
+    },
+    "performance": {
+      "iterators": "Minimize nested iterators",
+      "measures": "Prefer short, composable measures",
+      "relationships": "Avoid bi-directional on high-cardinality, prefer physical"
+    },
+    "anti_patterns": [
+      "Giant measures without VAR",
+      "ALL(<table>) when ALL(<column>) is enough",
+      "Using strings instead of IDs for joins/filters",
+      "Masking blanks everywhere",
+      "Calculated columns instead of measures/Power Query"
+    ]
+  }
+}
