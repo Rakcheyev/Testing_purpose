@@ -2,6 +2,13 @@
 
 ## 2025-11-27
 
+### RAG Bootstrap
+- Додано конфіг-прапорці `MCP_RAG_ENABLED`, `MCP_VECTOR_BACKEND`, `MCP_CHROMA_PERSIST_PATH`, `MCP_RAG_TOP_K` для керування Retrieval-функціоналом.
+- Створено модулі `mcp_server/vectorstore/` (фабрика + адаптер `ChromaVectorStore`) та `mcp_server/rag/` (ingest/query хелпери з чанкуванням ~420 токенів).
+- Реалізовано ендпоінт `/rag/query` з валідацією вводу, повертає топ-k витягів із колекцій `standards` і `pbip_reviews` через абстрактний vector store.
+- Додано CLI `scripts/rag_ingest_all.py` із режимом `--dry-run`, інтегровано в `.github/workflows/pilot-pipeline.yml` (оновлює Chroma-індекс у CI), додано залежність `chromadb` та покрито юніт-тестами `test_rag_vectorstore.py`.
+- TODO.md та AGENTS.MD оновлені нотатками щодо нового RAG шару й підключення CLI до automation pipeline.
+
 ### Pilot PBIP Workflow
 - Ліквідовано статичні профілі `pbip_staging/profiles/`; pipeline тепер покладається на метадані поруч із PBIP та евристики класифікації.
 - Реалізовано локальний CLI `python -m pbip_staging.pilot_pipeline` для запуску workflow без HTTP API.
@@ -27,6 +34,12 @@
 - Додано Streamlit-панель `pbip_staging/streamlit_app.py` з візуалізацією порушень, авто-fix та TMDL-патчів.
 - Додано Gradio-додаток `pbip_staging/gradio_app.py` з можливістю оновити список запусків і запустити pipeline напряму з UI.
 - README, TODO, AGENTS оновлені інструкціями щодо нових UI та подальших кроків (auth, фільтри, завантаження PBIP).
+
+### UI Upload & CI Guardrail
+- Streamlit та Gradio панелі підтримують аплоад PBIP/JSON артефактів із автоматичним запуском pipeline та відображають агреговану таблицю порушень за rule_id.
+- `pbip_staging/ui_shared.py` зберігає завантажені файли у `pbip_staging/input/`, розпаковує `.zip/.pbip` бандли та надає зведення по правилах.
+- Додано GitHub Actions workflow `.github/workflows/pilot-pipeline.yml`, який виконує dry-run `python -m pbip_staging.pilot_pipeline --dry-run pbip_staging/input/sample_model.json` на кожному push/pull request до `main`.
+- README.md, TODO.md та AGENTS.MD оновлені описом нових можливостей і CI-гардрейлу.
 
 ### Архітектурне планування
 - Оновлено TODO.md: додано секції "MCP + RAG Architecture", "MCP API & UI Gateway" та "MCP Admin Console" з деталізованими підзадачами.

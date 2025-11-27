@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-from .ui_shared import DEFAULT_INPUT_ROOT, load_runs, run_pipeline
+from .ui_shared import DEFAULT_INPUT_ROOT, load_runs, run_pipeline, save_uploaded_artifact
 
 st.set_page_config(page_title="PBIP Review Dashboard", layout="wide")
 st.title("PBIP Review Dashboard")
@@ -21,6 +21,24 @@ def refresh_runs():
 
 with st.sidebar:
     st.header("Pipeline Controls")
+    uploaded_file = st.file_uploader(
+        "Upload PBIP bundle or JSON",
+        type=["pbip", "zip", "json"],
+        help="Uploaded artifacts are stored in pbip_staging/input and processed immediately.",
+    )
+    if uploaded_file is not None:
+        saved = save_uploaded_artifact(uploaded_file.getbuffer(), uploaded_file.name)
+        with st.spinner("Running pbip_staging.pilot_pipeline..."):
+            result = run_pipeline([saved["artifact_path"]])
+        if result["success"]:
+            st.success(f"{saved['message']}\n\nPipeline completed successfully.")
+            refresh_runs()
+            st.experimental_rerun()
+        else:
+            st.error("Pipeline failed on uploaded artifact.")
+            if result["stderr"]:
+                st.error(result["stderr"])
+
     if st.button("Run pipeline on staging/input"):
         with st.spinner("Running pbip_staging.pilot_pipeline..."):
             result = run_pipeline([DEFAULT_INPUT_ROOT])
@@ -67,6 +85,11 @@ auto_fixes = standards.get("auto_fixes", [])
 if auto_fixes:
     st.markdown("### Auto-fix Suggestions")
     st.dataframe(pd.DataFrame(auto_fixes), use_container_width=True)
+
+rule_summary = selected_run.get("rule_summary", [])
+if rule_summary:
+    st.markdown("### Issues per rule")
+    st.dataframe(pd.DataFrame(rule_summary), use_container_width=True)
 
 if selected_run.get("recommended_tmdl"):
     st.markdown("### Recommended TMDL Patch")

@@ -244,10 +244,21 @@ mcp_server/
 - Workflow базується на `SessionManager` та `AuditTrail`, тому легко масштабується до FastAPI ендпоінтів, коли з'явиться потреба.
 
 ### UI прототипи для рев'ю PBIP
-- **Streamlit:** `streamlit run pbip_staging/streamlit_app.py` — панель відображає останні запуски pipeline, дозволяє ініціювати повторний прогін для `pbip_staging/input/`, переглядати знайдені порушення стандартів та TMDL-патчі.
-- **Gradio:** `python -m pbip_staging.gradio_app` — легковажкий веб-інтерфейс із переліком запусків, таблицями issues/auto-fix та кнопкою оновлення або повторного запуску pipeline.
+- **Streamlit:** `streamlit run pbip_staging/streamlit_app.py` — панель відображає останні запуски pipeline, дозволяє ініціювати повторний прогін для `pbip_staging/input/`, завантажувати PBIP/JSON напряму з браузера, переглядати агреговану таблицю порушень за правилами та TMDL-патчі.
+- **Gradio:** `python -m pbip_staging.gradio_app` — легковажкий веб-інтерфейс із переліком запусків, таблицями issues/auto-fix, зведенням по rule_id і можливістю аплоаду артефактів із автоматичним запуском pipeline.
 - Обидва UI використовують `pbip_artifacts/reviews/` як єдине джерело правди, тому їх можна запускати паралельно.
-- TODO: додати автентифікацію, фільтри за доменами/статусами та завантаження PBIP безпосередньо з UI.
+- TODO: додати автентифікацію та фільтри за доменами/статусами.
+
+### CI guardrail для pipeline
+- GitHub Actions workflow `.github/workflows/pilot-pipeline.yml` генерує артефакти перевірки (`python -m pbip_staging.pilot_pipeline pbip_staging/input/sample_model.json`), завантажує їх як CI-артефакт та перевіряє, що `external/standards_catalog.json` синхронізований (`python -m mcp_server.standards.sync --check`) на кожному `push`/`pull_request` до `main`.
+
+### RAG retrieval layer (feature flag)
+- У `mcp_server/config.py` додано прапорці `MCP_RAG_ENABLED`, `MCP_VECTOR_BACKEND`, `MCP_CHROMA_PERSIST_PATH`, `MCP_RAG_TOP_K`, що керують ввімкненням Retrieval-шару та обранням бекенда (початково `none`).
+- Пакет `mcp_server/vectorstore/` містить протокол VectorStore, фабрику `get_vector_store()` та адаптер `ChromaVectorStore` (персистенція в `./chromadb`).
+- Модуль `mcp_server/rag/ingest.py` збирає `external/standards_catalog.json` і вміст `pbip_artifacts/reviews/*`, чанкнувши текст (~420 токенів) та збагачуючи метаданими `resource/domain/subdomain/tags` перед індексацією.
+- Модуль `mcp_server/rag/query.py` надає `retrieve_context()` і хелпери для PBIP/SQL/PySpark, а FastAPI ендпоінт `POST /rag/query` повертає top-k фрагментів із колекцій `standards`, `pbip_reviews` за ресурсом/тегами.
+- CLI `python scripts/rag_ingest_all.py` індексує `external/standards_catalog.json` та `pbip_artifacts/reviews/*`; прапор `--dry-run` дозволяє порахувати чанки без звернення до бекенда.
+- CI-крок `.github/workflows/pilot-pipeline.yml` після генерації артефактів запускає `scripts/rag_ingest_all.py` з `MCP_RAG_ENABLED=1`, щоб тримати локальний Chroma-індекс у sync.
 
 ---
 

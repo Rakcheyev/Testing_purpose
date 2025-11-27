@@ -14,3 +14,9 @@ class MCPConfig:
     AUDIT_SAMPLE_RATE = float(os.getenv("MCP_AUDIT_SAMPLE", "0.3"))  # частка запитів
 
     # TODO: Додати secrets management (vault, encrypted storage)
+
+    # Retrieval-Augmented Generation (RAG) settings
+    RAG_ENABLED = bool(int(os.getenv("MCP_RAG_ENABLED", "0")))
+    VECTOR_BACKEND = os.getenv("MCP_VECTOR_BACKEND", "none")  # none | chroma
+    CHROMA_PERSIST_PATH = os.getenv("MCP_CHROMA_PERSIST_PATH", "./chromadb")
+    RAG_TOP_K = int(os.getenv("MCP_RAG_TOP_K", "5"))

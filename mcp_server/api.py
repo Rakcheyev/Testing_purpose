@@ -1,5 +1,7 @@
 """api.py — ендпоінти MCP server для інтеграції, рев'ю, стандартизації."""
 
+from typing import List, Optional
+
 from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel, ValidationError, constr
 import asyncio
@@ -13,6 +15,9 @@ from .security import (
     get_audit_sample as fetch_audit_sample,
 )
 from .orchestration import session_manager
+from .config import MCPConfig
+from .vectorstore import get_vector_store
+from .rag.query import retrieve_context
 
 
 app = FastAPI()
@@ -199,6 +204,15 @@ async def secure_health(request: Request, user: str = Depends(get_current_user))
 class ProcessPayload(BaseModel):
     data: constr(strip_whitespace=True, min_length=1, max_length=256)
 
+
+class RAGQueryPayload(BaseModel):
+    query: constr(strip_whitespace=True, min_length=3)
+    domain: Optional[str] = None
+    subdomain: Optional[str] = None
+    tags: Optional[List[str]] = None
+    top_k: Optional[int] = None
+
+
 @router.post("/process/validated")
 async def process_validated(request: Request):
     session_id = request.headers.get("X-Session-ID")
@@ -225,6 +239,28 @@ async def sampled_health(request: Request):
 @router.get("/audit/sampled")
 def get_audit_sample():
     return fetch_audit_sample()
+
+
+@router.post("/rag/query")
+async def rag_query(payload: RAGQueryPayload):
+    if not MCPConfig.RAG_ENABLED:
+        raise HTTPException(status_code=503, detail="RAG is disabled via configuration")
+    store = get_vector_store()
+    if store is None:
+        raise HTTPException(status_code=503, detail="Vector backend is not configured")
+    top_k = payload.top_k or MCPConfig.RAG_TOP_K
+    try:
+        results = retrieve_context(
+            store,
+            payload.query,
+            domain=payload.domain,
+            subdomain=payload.subdomain,
+            tags=payload.tags,
+            n=top_k,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"RAG query failed: {exc}") from exc
+    return {"results": results, "count": len(results)}
 
 @router.post("/metadata/sync")
 async def sync_metadata(request: Request):

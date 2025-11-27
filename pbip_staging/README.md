@@ -28,3 +28,8 @@
 - Крок `standards` перевіряє snake_case для мір, PascalCase для колонок, наявність/узгодженість display folders, форматування мір, додає попередження про антипатерни DAX (DIVIDE, COUNTROWS, VAR, ALL(<table>), LOOKUPVALUE) і генерує TMDL-рекомендації для перейменувань, display folders та formatString (`recommended_renames.tmdl`).
 - CLI також підтримує PBIP-бандли (`*.pbip` директорії), автоматично читаючи `DataModelSchema.json`.
 - Результати й логи перевірок зберігаються у `pbip_artifacts/reviews/<domain>__<назва>_<hash>/` разом із `standards.json`, `summary.json`, `audit.json`, `session_history.json`.
+
+### Streamlit/Gradio dashboards
+- `streamlit run pbip_staging/streamlit_app.py` — дозволяє завантажувати PBIP/JSON файли, автоматично запускати pipeline, переглядати детальні таблиці порушень та агреговану статистику по rule_id.
+- `python -m pbip_staging.gradio_app` — легкий веб-інтерфейс із підтримкою аплоаду артефактів, швидкого перезапуску pipeline та перегляду TMDL-патчів.
+- Обидва UI використовують `pbip_staging/ui_shared.py` для зберігання аплоадів у `pbip_staging/input/` і повторного використання логіки запуску CLI.

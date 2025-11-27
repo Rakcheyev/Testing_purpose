@@ -30,6 +30,12 @@
 - Локальний CLI `python -m pbip_staging.pilot_pipeline` класифікує домен за евристиками та локальними метаданими поруч із артефактами у `pbip_staging/input/`.
 - Перед додаванням нових валідаторів/агентів оновлюйте `mcp_server/standards/reader.py` – каталог (`external/standards_catalog.json`) містить схему з `automation.check`/`automation.auto_fix`, яка служить єдиною точкою правди для автоматичних перевірок.
 
+### Нові модулі RAG (2025-11-27)
+- `mcp_server/vectorstore/` — фабричний шар для векторних бекендів; поточна реалізація `ChromaVectorStore` з кешованою ініціалізацією через `get_vector_store()`.
+- `mcp_server/rag/ingest.py` — завантажує `external/standards_catalog.json` та артефакти `pbip_artifacts/reviews/*` у векторне сховище (чанки ~420 токенів, метадані: resource/domain/subdomain/tags).
+- `mcp_server/rag/query.py` — універсальний `retrieve_context()` та хелпери для PBIP/SQL/PySpark, які використовуються ендпоінтом `/rag/query`.
+- `scripts/rag_ingest_all.py` — CLI для оновлення векторного індексу; підтримує `--dry-run`, `--reset-cache`, `--require-backend` і використовується у CI після генерації pbip_artifacts.
+
 
 
 ---
@@ -118,9 +124,10 @@
 - [x] Підключити крок standards до реальних перевірок найменувань та генерації TMDL-патчів
 - [x] Додати базовий DAX lint та автогенерацію display folders/formatString у TMDL
 - [x] Підготувати UI/дашборд для презентації (Streamlit/Gradio)
-  - Streamlit: `pbip_staging/streamlit_app.py` (візуалізація артефактів, повторний запуск pipeline)
-  - Gradio: `pbip_staging/gradio_app.py` (легкий перегляд issues/auto-fix, кнопка refresh/run)
-  - Наступні кроки: auth, фільтри, можливість завантаження PBIP через UI
+  - Streamlit: `pbip_staging/streamlit_app.py` (візуалізація артефактів, повторний запуск pipeline, аплоад PBIP/JSON, агрегована статистика по rule_id)
+  - Gradio: `pbip_staging/gradio_app.py` (легкий перегляд issues/auto-fix, кнопка refresh/run, підтримка аплоаду з автоматичним запуском pipeline)
+  - Наступні кроки: auth, фільтри, синхронізація форматів із CI-звітами
+  - GitHub Actions: `.github/workflows/pilot-pipeline.yml` генерує та зберігає артефакти рев'ю, а також перевіряє синхронізацію `external/standards_catalog.json` на кожному push/pull request до `main`
 
 ### Monitoring
 - [ ] Додати health/status endpoints
