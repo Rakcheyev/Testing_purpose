@@ -56,3 +56,4 @@ pbip_artifacts/*.pbix
 monitoring/logs/
 *.csv
 pbip_artifacts/pilot_case/*/*.json
+pbip_artifacts/reviews/*/*.json

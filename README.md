@@ -135,6 +135,13 @@ mcp_server/
 
 Всі стандарти структуровано у external/standards_mcp.json для автоматичної обробки MCP.
 
+### Standards Catalog (`external/standards_catalog.json`)
+- `python -m mcp_server.standards.sync` генерує каталог з нормалізованими правилами (25 правил станом на 2025‑11‑27).
+- Каталог використовується локальним пайплайном (`pbip_staging/pilot_pipeline.py`) та майбутніми валідаторами як єдине джерело правди для дозволених display folders, вимог до форматування, анти-патернів тощо.
+- Структура кожного правила: базові метадані (`id`, `resource`, `scope`, `severity`), прив’язка до ентитетів (`applies_to`), деталізація (`details`) та машинні підказки в `automation.check`/`automation.auto_fix` для автоматизованих перевірок.
+- Нові секції `automation` дозволяють іншим валідаторам швидко зрозуміти, який тип перевірки слід виконати (`pattern`, `membership`, `lint`, `performance`, `required_fields`) і які дії рекомендовано для авто-виправлення (наприклад, перейменування у snake_case або встановлення `format_string`).
+- `mcp_server/standards/reader.py` залишається місцем розширення схеми: додайте нові rule builders, щоб розширити `automation` (наприклад, для SQL або Fabric tooling) перед підключенням додаткових валідаторів.
+
 ## 1. Валідація MS SQL даних, схем та процедур
 
 ### Деталізація
@@ -228,10 +235,19 @@ mcp_server/
 
 ## Pilot PBIP Workflow (локально без API)
 
-- Пілотні кейси зберігаються у `pbip_staging/pilot_case/<case_id>/` (metadata, notes, input PBIP).
-- Запуск локального сценарію: `python -m pbip_staging.pilot_pipeline --case case_sales`.
-- Результати потрапляють у `pbip_artifacts/pilot_case/<case_id>/` (`summary.json`, `audit.json`, stub-звіти для кожного PBIP).
-- Workflow використовує `SessionManager` та `AuditTrail`, тому легко масштабується до FastAPI ендпоінтів, коли з'явиться потреба.
+- Локальний CLI працює без попередньо визначених бізнес-кейсів: достатньо покласти PBIP у `pbip_staging/input/` або передати потрібні шляхи файлів/папок.
+- Запуск: `python -m pbip_staging.pilot_pipeline [<path1> <path2> ...]` (додайте `--dry-run`, щоб зібрати лише логування).
+- Скрипт автоматично класифікує джерело (sales, finance, supply_chain, marketing, hr, multi-domain), використовуючи локальні метадані (якщо поруч є `*.metadata.json`) та евристики з моделі.
+- Крок `standards` аналізує snake_case для мір, PascalCase для колонок, наявність і узгодженість display folders, форматування мір, а також типові антипатерни DAX (DIVIDE замість `/`, COUNT vs COUNTROWS, використання VAR, ALL(<table>), LOOKUPVALUE). Він генерує TMDL-сумісні пропозиції перейменувань, display folders і formatString (`recommended_renames.tmdl`).
+- CLI обробляє PBIP-бандли (`*.pbip` директрії) напряму, зчитуючи `DataModelSchema.json` для побудови структури.
+- Результати потрапляють у `pbip_artifacts/reviews/<domain>__<назва>_<hash>/` (`summary.json`, `audit.json`, `session_history.json`, `standards.json`, stub-звіти для кожного PBIP).
+- Workflow базується на `SessionManager` та `AuditTrail`, тому легко масштабується до FastAPI ендпоінтів, коли з'явиться потреба.
+
+### UI прототипи для рев'ю PBIP
+- **Streamlit:** `streamlit run pbip_staging/streamlit_app.py` — панель відображає останні запуски pipeline, дозволяє ініціювати повторний прогін для `pbip_staging/input/`, переглядати знайдені порушення стандартів та TMDL-патчі.
+- **Gradio:** `python -m pbip_staging.gradio_app` — легковажкий веб-інтерфейс із переліком запусків, таблицями issues/auto-fix та кнопкою оновлення або повторного запуску pipeline.
+- Обидва UI використовують `pbip_artifacts/reviews/` як єдине джерело правди, тому їх можна запускати паралельно.
+- TODO: додати автентифікацію, фільтри за доменами/статусами та завантаження PBIP безпосередньо з UI.
 
 ---
 

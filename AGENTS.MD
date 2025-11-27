@@ -27,7 +27,8 @@
 - Автоматичні перевірки MCP/стандартів перед перенесенням у pbip_artifacts
 - Переносити артефакти у pbip_artifacts лише після успішних перевірок
 - Всі workflow описувати у AGENTS.MD для прозорості та повторюваності
-- Пілотні кейси для демонстрації живуть у `pbip_staging/pilot_case/<case_id>/`, запуск CLI: `python -m pbip_staging.pilot_pipeline --case <id>`
+- Локальний CLI `python -m pbip_staging.pilot_pipeline` класифікує домен за евристиками та локальними метаданими поруч із артефактами у `pbip_staging/input/`.
+- Перед додаванням нових валідаторів/агентів оновлюйте `mcp_server/standards/reader.py` – каталог (`external/standards_catalog.json`) містить схему з `automation.check`/`automation.auto_fix`, яка служить єдиною точкою правди для автоматичних перевірок.
 
 
 
@@ -111,10 +112,15 @@
 - [ ] Інтеграція з REST API, DataGovernance
 - [ ] Інтеграція з CI/CD pipeline
 
-### Pilot PBIP Workflow (локально)
-- [x] Створити кейси `case_sales`, `case_finance` з metadata та notes
+-### Pilot PBIP Workflow (локально)
 - [x] Реалізувати CLI `pbip_staging/pilot_pipeline.py` для локальних запусків
-- [ ] Підготувати UI/дашборд для презентації (Streamlit/Gradio)
+- [x] Перевести CLI у режим без прив'язки до кейсів (динамічне визначення домену)
+- [x] Підключити крок standards до реальних перевірок найменувань та генерації TMDL-патчів
+- [x] Додати базовий DAX lint та автогенерацію display folders/formatString у TMDL
+- [x] Підготувати UI/дашборд для презентації (Streamlit/Gradio)
+  - Streamlit: `pbip_staging/streamlit_app.py` (візуалізація артефактів, повторний запуск pipeline)
+  - Gradio: `pbip_staging/gradio_app.py` (легкий перегляд issues/auto-fix, кнопка refresh/run)
+  - Наступні кроки: auth, фільтри, можливість завантаження PBIP через UI
 
 ### Monitoring
 - [ ] Додати health/status endpoints

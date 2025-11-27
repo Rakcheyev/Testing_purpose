@@ -1,0 +1,116 @@
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ARTIFACTS_ROOT = PROJECT_ROOT / "pbip_artifacts" / "reviews"
+DEFAULT_INPUT_ROOT = Path(__file__).resolve().parent / "input"
+
+
+def _read_json(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text())
+    except json.JSONDecodeError:
+        return {}
+
+
+def _read_text(path: Path) -> Optional[str]:
+    if not path.exists():
+        return None
+    try:
+        return path.read_text()
+    except OSError:
+        return None
+
+
+def _iso_to_datetime(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _build_label(run_dir: Path, summary: Dict[str, Any]) -> str:
+    domain = summary.get("classification", {}).get("domain")
+    source_name = Path(summary.get("source", run_dir.name)).name
+    if domain:
+        return f"{domain} · {source_name}"
+    return source_name
+
+
+def _last_step_timestamp(summary: Dict[str, Any]) -> Optional[datetime]:
+    steps = summary.get("steps") or []
+    if not steps:
+        return None
+    last_ts = steps[-1].get("timestamp")
+    return _iso_to_datetime(last_ts)
+
+
+def load_run(run_dir: Path) -> Dict[str, Any]:
+    summary = _read_json(run_dir / "summary.json")
+    standards = _read_json(run_dir / "standards.json")
+    audit = _read_json(run_dir / "audit.json")
+    session_history = _read_json(run_dir / "session_history.json")
+    recommended_tmdl = _read_text(run_dir / "recommended_renames.tmdl")
+
+    issue_count = (
+        standards.get("issue_count")
+        if standards
+        else summary.get("standards_issue_count")
+    )
+
+    return {
+        "name": run_dir.name,
+        "label": _build_label(run_dir, summary),
+        "path": run_dir,
+        "summary": summary,
+        "standards": standards,
+        "issue_count": issue_count,
+        "audit": audit,
+        "session_history": session_history,
+        "recommended_tmdl": recommended_tmdl,
+        "completed_at": _last_step_timestamp(summary),
+    }
+
+
+def load_runs() -> List[Dict[str, Any]]:
+    if not ARTIFACTS_ROOT.exists():
+        return []
+    runs = [load_run(path) for path in ARTIFACTS_ROOT.iterdir() if path.is_dir()]
+    runs.sort(key=lambda item: item.get("completed_at") or datetime.min, reverse=True)
+    return runs
+
+
+def run_pipeline(targets: Optional[Iterable[Path]] = None, *, dry_run: bool = False) -> Dict[str, Any]:
+    cmd: List[str] = [sys.executable, "-m", "pbip_staging.pilot_pipeline"]
+    if dry_run:
+        cmd.append("--dry-run")
+    if targets:
+        cmd.extend(str(Path(target)) for target in targets)
+
+    completed = subprocess.run(cmd, capture_output=True, text=True)
+    return {
+        "success": completed.returncode == 0,
+        "returncode": completed.returncode,
+        "stdout": completed.stdout.strip(),
+        "stderr": completed.stderr.strip(),
+        "command": cmd,
+    }
+
+
+__all__ = [
+    "ARTIFACTS_ROOT",
+    "DEFAULT_INPUT_ROOT",
+    "load_run",
+    "load_runs",
+    "run_pipeline",
+]

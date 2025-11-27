@@ -1,0 +1,722 @@
+{
+  "version": "2025-11-27T12:24:20.856592+00:00",
+  "rule_count": 25,
+  "sources": {
+    "legacy_config": "external/standards_mcp.json"
+  },
+  "rules": [
+    {
+      "id": "dax.naming.measure.snake_case",
+      "title": "Measures follow snake_case with semantic prefix",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "naming",
+      "severity": "warning",
+      "description": "Measures must follow: snake_case with semantic prefix",
+      "details": {
+        "pattern": "snake_case with semantic prefix"
+      },
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "dax",
+        "measure",
+        "naming"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "pattern",
+          "field": "name",
+          "matcher": "snake_case with semantic prefix"
+        },
+        "auto_fix": {
+          "type": "transform",
+          "strategy": "snake_case"
+        }
+      }
+    },
+    {
+      "id": "dax.naming.column.pascal_case",
+      "title": "Columns use PascalCase with optional spaces",
+      "resource": "DAX",
+      "scope": "column",
+      "category": "naming",
+      "severity": "info",
+      "description": "Columns should follow: PascalCase with spaces for user-facing",
+      "details": {
+        "pattern": "PascalCase with spaces for user-facing"
+      },
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "column",
+        "dax",
+        "naming"
+      ],
+      "applies_to": [
+        "column"
+      ],
+      "automation": {
+        "check": {
+          "type": "pattern",
+          "field": "name",
+          "matcher": "PascalCase with spaces for user-facing"
+        },
+        "auto_fix": {
+          "type": "transform",
+          "strategy": "pascal_case_with_spaces"
+        }
+      }
+    },
+    {
+      "id": "dax.naming.display_folder.allowed",
+      "title": "Approved display folders",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "organisation",
+      "severity": "info",
+      "description": "Measures and columns should reside in the curated display folders.",
+      "details": {
+        "allowed": [
+          "_Basic",
+          "_Final",
+          "_Tech",
+          "_Titles",
+          "_Color_themes"
+        ],
+        "default": "_Basic"
+      },
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "display_folder",
+        "organisation"
+      ],
+      "applies_to": [
+        "measure",
+        "column"
+      ],
+      "automation": {
+        "check": {
+          "type": "membership",
+          "field": "display_folder",
+          "allowed": [
+            "_Basic",
+            "_Final",
+            "_Tech",
+            "_Titles",
+            "_Color_themes"
+          ]
+        },
+        "auto_fix": {
+          "type": "assign",
+          "field": "display_folder",
+          "value": "_Basic"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.qualification",
+      "title": "DAX coding guideline: qualification",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "Columns fully qualified, measures unqualified",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "qualification"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "qualification"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.formatting",
+      "title": "DAX coding guideline: formatting",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "DAX Formatter, one logical step per line",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "formatting"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "formatting"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.variables",
+      "title": "DAX coding guideline: variables",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "Prefer VAR, group scalars before tables",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "variables"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "variables"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.division",
+      "title": "DAX coding guideline: division",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "Use DIVIDE() unless denominator is guaranteed non-zero",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "division"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "division"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.counting",
+      "title": "DAX coding guideline: counting",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "Prefer COUNTROWS over COUNT on a column",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "counting"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "counting"
+        }
+      }
+    },
+    {
+      "id": "dax.coding.single_value",
+      "title": "DAX coding guideline: single_value",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "coding",
+      "severity": "info",
+      "description": "Use SELECTEDVALUE()",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "coding",
+        "single_value"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule": "single_value"
+        }
+      }
+    },
+    {
+      "id": "dax.performance.iterators",
+      "title": "DAX performance guideline: iterators",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "performance",
+      "severity": "info",
+      "description": "Minimize nested iterators",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "iterators",
+        "performance"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "performance",
+          "rule": "iterators"
+        }
+      }
+    },
+    {
+      "id": "dax.performance.measures",
+      "title": "DAX performance guideline: measures",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "performance",
+      "severity": "info",
+      "description": "Prefer short, composable measures",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "measures",
+        "performance"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "performance",
+          "rule": "measures"
+        }
+      }
+    },
+    {
+      "id": "dax.performance.relationships",
+      "title": "DAX performance guideline: relationships",
+      "resource": "DAX",
+      "scope": "model",
+      "category": "performance",
+      "severity": "info",
+      "description": "Avoid bi-directional on high-cardinality, prefer physical",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "performance",
+        "relationships"
+      ],
+      "applies_to": [
+        "model"
+      ],
+      "automation": {
+        "check": {
+          "type": "performance",
+          "rule": "relationships"
+        }
+      }
+    },
+    {
+      "id": "dax.anti_pattern.giant_measures_without_var",
+      "title": "DAX anti-pattern",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "anti_pattern",
+      "severity": "warning",
+      "description": "Giant measures without VAR",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "anti_pattern",
+        "dax"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule_id": "dax.anti_pattern.giant_measures_without_var"
+        }
+      }
+    },
+    {
+      "id": "dax.anti_pattern.all_table_when_all_column_is_enough",
+      "title": "DAX anti-pattern",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "anti_pattern",
+      "severity": "warning",
+      "description": "ALL(<table>) when ALL(<column>) is enough",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "anti_pattern",
+        "dax"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule_id": "dax.anti_pattern.all_table_when_all_column_is_enough"
+        }
+      }
+    },
+    {
+      "id": "dax.anti_pattern.using_strings_instead_of_ids_for_joins_f",
+      "title": "DAX anti-pattern",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "anti_pattern",
+      "severity": "warning",
+      "description": "Using strings instead of IDs for joins/filters",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "anti_pattern",
+        "dax"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule_id": "dax.anti_pattern.using_strings_instead_of_ids_for_joins_f"
+        }
+      }
+    },
+    {
+      "id": "dax.anti_pattern.masking_blanks_everywhere",
+      "title": "DAX anti-pattern",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "anti_pattern",
+      "severity": "warning",
+      "description": "Masking blanks everywhere",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "anti_pattern",
+        "dax"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule_id": "dax.anti_pattern.masking_blanks_everywhere"
+        }
+      }
+    },
+    {
+      "id": "dax.anti_pattern.calculated_columns_instead_of_measures_p",
+      "title": "DAX anti-pattern",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "anti_pattern",
+      "severity": "warning",
+      "description": "Calculated columns instead of measures/Power Query",
+      "details": {},
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "anti_pattern",
+        "dax"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "lint",
+          "rule_id": "dax.anti_pattern.calculated_columns_instead_of_measures_p"
+        }
+      }
+    },
+    {
+      "id": "dax.formatting.measure.format_string_required",
+      "title": "Measures define formatString",
+      "resource": "DAX",
+      "scope": "measure",
+      "category": "formatting",
+      "severity": "warning",
+      "description": "Measures should specify formatString for consistent reporting.",
+      "details": {
+        "recommended": "#,##0.00;(#,##0.00);-"
+      },
+      "references": [
+        "external/DAX_Templates/Standards/02_DAX_Standards_and_Naming.md"
+      ],
+      "tags": [
+        "formatting"
+      ],
+      "applies_to": [
+        "measure"
+      ],
+      "automation": {
+        "check": {
+          "type": "presence",
+          "field": "format_string"
+        },
+        "auto_fix": {
+          "type": "assign",
+          "field": "format_string",
+          "value": "#,##0.00;(#,##0.00);-"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.header_comment",
+      "title": "Power Query formatting: header_comment",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "{'fields': ['query_name', 'purpose', 'source', 'dependencies', 'author', 'created', 'notes'], 'style': 'snake_case for queries/functions, PascalCase for steps'}",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "header_comment",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "header_comment"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.naming",
+      "title": "Power Query formatting: naming",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "{'external_objects': 'snake_case', 'steps': 'PascalCase'}",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "naming",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "naming"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.indentation",
+      "title": "Power Query formatting: indentation",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "4 spaces",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "indentation",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "indentation"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.commas",
+      "title": "Power Query formatting: commas",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "trailing",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "commas",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "commas"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.parentheses",
+      "title": "Power Query formatting: parentheses",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "open inline, close on new line",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "parentheses",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "parentheses"
+        }
+      }
+    },
+    {
+      "id": "power_query.formatting.comments",
+      "title": "Power Query formatting: comments",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "formatting",
+      "severity": "info",
+      "description": "block-level, before sections",
+      "details": {},
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "comments",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "formatter",
+          "rule": "comments"
+        }
+      }
+    },
+    {
+      "id": "power_query.documentation.doc_block_required",
+      "title": "Power Query documentation block",
+      "resource": "PowerQuery",
+      "scope": "query",
+      "category": "documentation",
+      "severity": "warning",
+      "description": "Power Query scripts require a documentation block with the specified fields.",
+      "details": {
+        "required_fields": [
+          "Documentation.Name",
+          "Documentation.Description",
+          "Documentation.LongDescription",
+          "Documentation.Category",
+          "Documentation.Source",
+          "Documentation.Version",
+          "Documentation.Examples"
+        ]
+      },
+      "references": [
+        "external/Power_Query_guide/Standards/FORMATTER.md"
+      ],
+      "tags": [
+        "documentation",
+        "power_query"
+      ],
+      "applies_to": [
+        "query"
+      ],
+      "automation": {
+        "check": {
+          "type": "required_fields",
+          "fields": [
+            "Documentation.Name",
+            "Documentation.Description",
+            "Documentation.LongDescription",
+            "Documentation.Category",
+            "Documentation.Source",
+            "Documentation.Version",
+            "Documentation.Examples"
+          ],
+          "path": "documentation"
+        }
+      }
+    }
+  ]
+}

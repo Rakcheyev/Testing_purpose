@@ -3,10 +3,35 @@
 ## 2025-11-27
 
 ### Pilot PBIP Workflow
-- Створено структуру пілотних кейсів (`pbip_staging/pilot_case/<id>`) з metadata та нотатками.
-- Реалізовано локальний CLI `python -m pbip_staging.pilot_pipeline --case <id>` для запуску workflow без HTTP API.
-- Артефакти, історія сесій і аудит зберігаються у `pbip_artifacts/pilot_case/<id>/`.
+- Ліквідовано статичні профілі `pbip_staging/profiles/`; pipeline тепер покладається на метадані поруч із PBIP та евристики класифікації.
+- Реалізовано локальний CLI `python -m pbip_staging.pilot_pipeline` для запуску workflow без HTTP API.
+- Історичні артефакти `pbip_artifacts/pilot_case/<id>/` позначені як legacy; поточні результати формуються у `pbip_artifacts/reviews/`.
 - README, TODO, AGENTS оновлені описом сценарію та наступними кроками (UI для презентації).
+
+### Pipeline Refinement
+- CLI оновлено до кейс-агностичного режиму: PBIP-файли скануються з `pbip_staging/input/` або заданих шляхів, стандартні профілі підтягуються автоматично.
+- Додано розгорнуті перевірки кроку `standards`: snake_case для мір, PascalCase для колонок, контроль display folders, обов'язковість formatString, виявлення базових DAX-антипатернів, генерація `standards.json` та `recommended_renames.tmdl` (включає перейменування, display folders, formatString).
+- Розширено класифікацію доменів (sales, finance, supply_chain, marketing, hr, multi-domain) із врахуванням метаданих та структури моделі.
+- Артефакти переносяться у `pbip_artifacts/reviews/<domain>__<назва>_<hash>/` з окремими `summary.json`, `audit.json`, `session_history.json`, `standards.json`.
+- CLI тепер напряму обробляє директорії `*.pbip`, зчитуючи `DataModelSchema.json`.
+- Документацію (`README.md`, `pbip_staging/README.md`, `AGENTS.MD`, `TODO.md`) синхронізовано з новою логікою.
+
+### Standards Catalog Schema
+- Розширено `StandardRule` у `mcp_server/standards/reader.py`: додано `applies_to`, `automation.check`, `automation.auto_fix`, згенеровано перформанс-правила.
+- `python -m mcp_server.standards.sync` тепер випускає 25 правил у `external/standards_catalog.json`, включаючи machine-friendly підказки для майбутніх валідаторів.
+- README.md та AGENTS.MD доповнені інструкціями щодо каталогу та порядку розширення схеми.
+- `pbip_staging/pilot_pipeline.py` під час перевірок і авто-фіксів використовує `automation.*` з каталогу (pattern, membership, assign/transform), тож усі рекомендації йдуть напряму з `external/standards_catalog.json`.
+
+### UI Prototypes
+- Створено спільні утиліти `pbip_staging/ui_shared.py` для читання артефактів та повторного запуску pipeline.
+- Додано Streamlit-панель `pbip_staging/streamlit_app.py` з візуалізацією порушень, авто-fix та TMDL-патчів.
+- Додано Gradio-додаток `pbip_staging/gradio_app.py` з можливістю оновити список запусків і запустити pipeline напряму з UI.
+- README, TODO, AGENTS оновлені інструкціями щодо нових UI та подальших кроків (auth, фільтри, завантаження PBIP).
+
+### Архітектурне планування
+- Оновлено TODO.md: додано секції "MCP + RAG Architecture", "MCP API & UI Gateway" та "MCP Admin Console" з деталізованими підзадачами.
+- Зафіксовано roadmap для RAG service, ingestion-пайплайна знань та інтеграції оркестратора з векторними індексами.
+- Розплановано розвиток UI (Streamlit/Gradio) та адмін-панелі з фокусом на RBAC, telemetry й повторне використання API Gateway.
 
 ## 2025-11-26
 

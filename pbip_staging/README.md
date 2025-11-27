@@ -13,7 +13,7 @@
 - `m_query/` — M-код (Power Query)
 - `dax/` — DAX-артефакти (міри, шаблони)
 - `reports/` — звіти перевірок
-- `pilot_case/` — пілотні кейси (локальний workflow без API)
+- `input/` — за замовчуванням сканується локальним CLI для PBIP інспекції
 
 ## Робочий процес
 1. Додавайте артефакти у pbip_staging
@@ -21,7 +21,10 @@
 3. Якщо всі статуси "green" — переносіть у pbip_artifacts
 4. Якщо є помилки — виправляйте у staging, повторюйте перевірки
 
-### Пілотний локальний workflow
-- Наповніть кейс (наприклад, `case_sales`) PBIP-файлами у `pilot_case/<case>/input/`
-- Запустіть `python -m pbip_staging.pilot_pipeline --case <case>`
-- Результати й логи перевірок зберігаються у `pbip_artifacts/pilot_case/<case>/`
+### Локальний workflow без попередньо визначених кейсів
+- Покладіть PBIP-експорти у `pbip_staging/input/` або передайте власні шляхи файлів/папок.
+- Запустіть `python -m pbip_staging.pilot_pipeline` (опціонально `--dry-run` для пропуску генерації артефактів).
+- Скрипт автоматично класифікує звіти за доменом (sales, finance, supply_chain, marketing, hr, multi-domain), використовуючи локальні метадані та евристики без попередньо збережених профілів.
+- Крок `standards` перевіряє snake_case для мір, PascalCase для колонок, наявність/узгодженість display folders, форматування мір, додає попередження про антипатерни DAX (DIVIDE, COUNTROWS, VAR, ALL(<table>), LOOKUPVALUE) і генерує TMDL-рекомендації для перейменувань, display folders та formatString (`recommended_renames.tmdl`).
+- CLI також підтримує PBIP-бандли (`*.pbip` директорії), автоматично читаючи `DataModelSchema.json`.
+- Результати й логи перевірок зберігаються у `pbip_artifacts/reviews/<domain>__<назва>_<hash>/` разом із `standards.json`, `summary.json`, `audit.json`, `session_history.json`.

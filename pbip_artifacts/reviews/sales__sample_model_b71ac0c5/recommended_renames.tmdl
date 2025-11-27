@@ -1,0 +1,6 @@
+// Suggested safe statements (review before applying)
+ALTER MEASURE 'SalesData'[Total Sales] RENAME TO [total_sales];
+ALTER MEASURE 'SalesData'[Total Sales] SET DISPLAYFOLDER = '_Basic';
+ALTER MEASURE 'SalesData'[Total Sales] SET FORMAT_STRING = "#,##0.00;(#,##0.00);-";
+ALTER COLUMN 'SalesData'[sales_amount] RENAME TO [Sales Amount];
+ALTER COLUMN 'SalesData'[sales_amount] SET DISPLAYFOLDER = '_Basic';

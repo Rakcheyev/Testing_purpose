@@ -1,0 +1,23 @@
+{
+  "model": {
+    "tables": [
+      {
+        "name": "SalesData",
+        "measures": [
+          {
+            "name": "Total Sales",
+            "displayFolder": "",
+            "formatString": "",
+            "expression": "SUM('SalesData'[Amount])"
+          }
+        ],
+        "columns": [
+          {
+            "name": "sales_amount",
+            "displayFolder": "Finance"
+          }
+        ]
+      }
+    ]
+  }
+}

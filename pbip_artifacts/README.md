@@ -19,3 +19,4 @@
 - `m_query/` — M-код (Power Query)
 - `dax/` — DAX-артефакти (міри, шаблони)
 - `reports/` — звіти рев'ю та стандартизації
+- `reviews/` — результати локального pipeline (`summary.json`, `audit.json`, stub-звіти)
