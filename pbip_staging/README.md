@@ -13,9 +13,15 @@
 - `m_query/` — M-код (Power Query)
 - `dax/` — DAX-артефакти (міри, шаблони)
 - `reports/` — звіти перевірок
+- `pilot_case/` — пілотні кейси (локальний workflow без API)
 
 ## Робочий процес
 1. Додавайте артефакти у pbip_staging
 2. Запускайте MCP-модулі для перевірки
 3. Якщо всі статуси "green" — переносіть у pbip_artifacts
 4. Якщо є помилки — виправляйте у staging, повторюйте перевірки
+
+### Пілотний локальний workflow
+- Наповніть кейс (наприклад, `case_sales`) PBIP-файлами у `pilot_case/<case>/input/`
+- Запустіть `python -m pbip_staging.pilot_pipeline --case <case>`
+- Результати й логи перевірок зберігаються у `pbip_artifacts/pilot_case/<case>/`

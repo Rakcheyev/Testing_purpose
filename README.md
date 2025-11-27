@@ -226,6 +226,13 @@ mcp_server/
 **Вплив:** підвищення довіри до даних, прозорість, зниження ризиків
 **Альтернатива:** ручне ведення каталогів, розрізнені Excel/SharePoint-реєстри
 
+## Pilot PBIP Workflow (локально без API)
+
+- Пілотні кейси зберігаються у `pbip_staging/pilot_case/<case_id>/` (metadata, notes, input PBIP).
+- Запуск локального сценарію: `python -m pbip_staging.pilot_pipeline --case case_sales`.
+- Результати потрапляють у `pbip_artifacts/pilot_case/<case_id>/` (`summary.json`, `audit.json`, stub-звіти для кожного PBIP).
+- Workflow використовує `SessionManager` та `AuditTrail`, тому легко масштабується до FastAPI ендпоінтів, коли з'явиться потреба.
+
 ---
 
 ## Формат session_id та принципи сесій MCP

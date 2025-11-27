@@ -55,3 +55,4 @@ pbip_staging/*.pbip
 pbip_artifacts/*.pbix
 monitoring/logs/
 *.csv
+pbip_artifacts/pilot_case/*/*.json

@@ -27,6 +27,7 @@
 - Автоматичні перевірки MCP/стандартів перед перенесенням у pbip_artifacts
 - Переносити артефакти у pbip_artifacts лише після успішних перевірок
 - Всі workflow описувати у AGENTS.MD для прозорості та повторюваності
+- Пілотні кейси для демонстрації живуть у `pbip_staging/pilot_case/<case_id>/`, запуск CLI: `python -m pbip_staging.pilot_pipeline --case <id>`
 
 
 
@@ -109,6 +110,11 @@
 ### Integration
 - [ ] Інтеграція з REST API, DataGovernance
 - [ ] Інтеграція з CI/CD pipeline
+
+### Pilot PBIP Workflow (локально)
+- [x] Створити кейси `case_sales`, `case_finance` з metadata та notes
+- [x] Реалізувати CLI `pbip_staging/pilot_pipeline.py` для локальних запусків
+- [ ] Підготувати UI/дашборд для презентації (Streamlit/Gradio)
 
 ### Monitoring
 - [ ] Додати health/status endpoints

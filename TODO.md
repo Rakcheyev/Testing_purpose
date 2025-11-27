@@ -89,6 +89,9 @@
   - [ ] Додати можливість вручну підвантажувати PBIP для подальшого аналізу та обробки
 - [ ] Запускати автоматичні перевірки MCP/стандартів
 - [ ] Переносити артефакти у pbip_artifacts лише після успішних перевірок
+- [x] Підготувати пілотні кейси `pilot_case` з metadata, notes і директоріями input
+- [x] Реалізувати локальний CLI workflow `python -m pbip_staging.pilot_pipeline --case <id>`
+- [ ] Розробити UI/дашборд для демонстрації результатів пілоту (Streamlit/Gradio)
 
 ## 3. Monitoring Layer
 - [ ] Implement MCP Monitoring

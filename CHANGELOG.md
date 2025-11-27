@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2025-11-27
+
+### Pilot PBIP Workflow
+- Створено структуру пілотних кейсів (`pbip_staging/pilot_case/<id>`) з metadata та нотатками.
+- Реалізовано локальний CLI `python -m pbip_staging.pilot_pipeline --case <id>` для запуску workflow без HTTP API.
+- Артефакти, історія сесій і аудит зберігаються у `pbip_artifacts/pilot_case/<id>/`.
+- README, TODO, AGENTS оновлені описом сценарію та наступними кроками (UI для презентації).
+
 ## 2025-11-26
 
 ### MCP Server Endpoints
