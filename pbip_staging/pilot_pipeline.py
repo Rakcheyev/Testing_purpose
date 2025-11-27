@@ -730,8 +730,10 @@ def generate_tmdl_corrections(fixes: List[Dict[str, Any]]) -> str:
                 f"ALTER {qualified} SET DISPLAYFOLDER = '{escape_single_quotes(str(suggested))}';"
             )
         elif action == "set_format_string":
+            # Винести replace поза f-string
+            fmt = str(suggested).replace('"', '""')
             lines.append(
-                f'ALTER {qualified} SET FORMAT_STRING = "{str(suggested).replace("\"", "\"\"")}";'
+                f'ALTER {qualified} SET FORMAT_STRING = "{fmt}";'
             )
         else:
             lines.append(
