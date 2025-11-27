@@ -13,6 +13,9 @@
 - Додано тести `test_session_lifecycle.py`, оновлено `test_session_manager.py` для перевірки життєвого циклу.
 - README, TODO та AGENTS доповнені описом workflow і доступними статусами.
 
+### LLM Integration Planning
+- TODO.md доповнено задачами з інтеграції локальних моделей (Llama/Mistral/Phi) та прошарку зовнішніх моделей із фільтрацією даних.
+
 
 ## [Unreleased]
  - Створено каркас серверної частини MCP (mcp_server/): main.py, config.py, api.py, security.py, orchestration.py, standards/, tests/
