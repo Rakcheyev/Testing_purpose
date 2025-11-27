@@ -66,6 +66,13 @@
   - [ ] Порівнювати PBIP структуру з MCP стандартами (external/standards_mcp.json)
   - [ ] Генерувати звіт відповідності у pbip_artifacts/reports
   - [ ] Виявляти та фіксувати невідповідності (lint, warnings, errors)
+  - [ ] Реалізувати модуль пакетної нормалізації TMDL за стандартами MCP
+    - [ ] Побудувати парсер/серіалізатор TMDL (класова модель та round-trip збереження)
+    - [ ] Зв'язати правила з external/standards_mcp.json у єдину структуру `StandardRule`
+    - [ ] Реалізувати pipeline трансформацій (rename, display folders, формат DAX) з режимом dry-run та diff-звітами
+    - [ ] Додати unit- та snapshot-тести для типових моделей і регресій
+    - [ ] Інтегрувати модуль у pbip_artifacts з аудитом змін та можливістю ручного review
+    - [ ] Додати конфіг безпеки (whitelist моделей, фільтрація чутливих полів)
 - [ ] Automate deploy/redeploy
   - [ ] Реалізувати деплой/редеплой PBIP
 - [ ] Versioning & audit

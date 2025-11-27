@@ -16,6 +16,9 @@
 ### LLM Integration Planning
 - TODO.md доповнено задачами з інтеграції локальних моделей (Llama/Mistral/Phi) та прошарку зовнішніх моделей із фільтрацією даних.
 
+### PBIP TMDL Standardization
+- У TODO.md додано критичні підзадачі для модулю пакетного перепису TMDL: парсер, правила зі стандартів, pipeline трансформацій, тестування, інтеграція та безпекові налаштування.
+
 
 ## [Unreleased]
  - Створено каркас серверної частини MCP (mcp_server/): main.py, config.py, api.py, security.py, orchestration.py, standards/, tests/
