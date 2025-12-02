@@ -1,19 +1,15 @@
+
 """api.py — ендпоінти MCP server для інтеграції, рев'ю, стандартизації."""
 
-from typing import List, Optional
-
-from fastapi import FastAPI, APIRouter, Request, BackgroundTasks, Depends, HTTPException
+from fastapi import FastAPI, APIRouter, Request, HTTPException, BackgroundTasks, Depends
 from pydantic import BaseModel, ValidationError, constr
+from typing import Optional, List
 import asyncio
+import requests
+import time
 
-
-from .security import (
-    sandboxed,
-    get_current_user,
-    rate_limiter,
-    audit_sampler,
-    get_audit_sample as fetch_audit_sample,
-)
+# Internal imports
+from .security import sandboxed, get_current_user, rate_limiter, audit_sampler, get_audit_sample as fetch_audit_sample
 from .orchestration import session_manager
 from .config import MCPConfig
 from .vectorstore import get_vector_store
@@ -116,7 +112,6 @@ def async_task_callback(request: Request, background_tasks: BackgroundTasks):
         return {"error": "Callback URL required"}
     # Симуляція асинхронної задачі з callback
     def notify():
-        import requests
         # ... тут може бути реальна логіка ...
         requests.post(callback_url, json={"session_id": session_id, "result": "async completed"})
     background_tasks.add_task(notify)
@@ -132,7 +127,6 @@ def async_task_polling(request: Request, background_tasks: BackgroundTasks):
         return {"error": "Session ID required"}
     # Симуляція запуску задачі
     def run_task():
-        import time
         time.sleep(2)
         async_tasks_status[session_id] = "completed"
     async_tasks_status[session_id] = "running"
@@ -300,5 +294,4 @@ async def standardize(request: Request):
 @router.get("/monitoring")
 async def monitoring():
     # stub-логіка: повертаємо статус та timestamp
-    import time
     return {"status": "active", "timestamp": time.time()}
